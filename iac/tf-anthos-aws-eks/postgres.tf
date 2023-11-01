@@ -89,14 +89,3 @@ resource "aws_security_group_rule" "eks_to_psql" {
   description       = "Allow access from finops eks cluster to psql"
   source_security_group_id = module.eks.node_security_group_id
 }
-
-resource "aws_security_group_rule" "office_psql" {
-  count = var.environment == "test" ? 1 : 0
-  security_group_id = aws_security_group.psql[0].id
-  from_port         = 0
-  description       = "Allow access from office"
-  protocol          = "-1"
-  to_port           = 0
-  type              = "ingress"
-  cidr_blocks = ["212.31.98.41/32"]
-}
