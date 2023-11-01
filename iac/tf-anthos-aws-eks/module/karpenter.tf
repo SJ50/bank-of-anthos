@@ -1,6 +1,6 @@
 provider "aws" {
   region = "us-east-1"
-  alias = "public-ecr"
+  alias  = "public-ecr"
 }
 
 data "aws_ecrpublic_authorization_token" "token" {
@@ -8,7 +8,7 @@ data "aws_ecrpublic_authorization_token" "token" {
 }
 
 module "karpenter" {
-  count = var.custom_addons.karpenter ? 1 : 0
+  count  = var.custom_addons.karpenter ? 1 : 0
   source = "./modules/karpenter_addon"
 
   cluster_name      = try(aws_eks_cluster.this[0].name, "")
@@ -30,7 +30,7 @@ module "karpenter" {
 ################################################################################
 
 resource "kubectl_manifest" "karpenter_provisioner" {
-  count = var.custom_addons.karpenter ? 1 : 0
+  count     = var.custom_addons.karpenter ? 1 : 0
   yaml_body = <<-YAML
     apiVersion: karpenter.sh/v1alpha5
     kind: Provisioner
@@ -70,7 +70,7 @@ resource "kubectl_manifest" "karpenter_provisioner" {
 }
 
 resource "kubectl_manifest" "karpenter_node_template" {
-  count = var.custom_addons.karpenter ? 1 : 0
+  count     = var.custom_addons.karpenter ? 1 : 0
   yaml_body = <<-YAML
     apiVersion: karpenter.k8s.aws/v1alpha1
     kind: AWSNodeTemplate

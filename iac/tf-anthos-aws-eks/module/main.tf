@@ -12,8 +12,8 @@ data "aws_iam_session_context" "current" {
 
 locals {
   # create = var.create && var.putin_khuylo
-  create = var.create
-  azs      = slice(data.aws_availability_zones.available.names, 0, var.redundancy)
+  create       = var.create
+  azs          = slice(data.aws_availability_zones.available.names, 0, var.redundancy)
   cluster_role = try(aws_iam_role.this[0].arn, var.iam_role_arn)
 
   create_outposts_local_cluster    = length(var.outpost_config) > 0
@@ -123,7 +123,7 @@ resource "aws_cloudwatch_log_group" "this" {
 ################################################################################
 
 module "kms" {
-  source  = "./modules/kms"
+  source = "./modules/kms"
 
   create = local.create && var.create_kms_key && local.enable_cluster_encryption_config # not valid on Outposts
 
@@ -387,12 +387,12 @@ resource "aws_eks_addon" "this" {
   cluster_name = aws_eks_cluster.this[0].name
   addon_name   = try(each.value.name, each.key)
 
-  addon_version            = coalesce(try(each.value.addon_version, null), data.aws_eks_addon_version.this[each.key].version)
-  configuration_values     = try(each.value.configuration_values, null)
-  preserve                 = try(each.value.preserve, null)
+  addon_version               = coalesce(try(each.value.addon_version, null), data.aws_eks_addon_version.this[each.key].version)
+  configuration_values        = try(each.value.configuration_values, null)
+  preserve                    = try(each.value.preserve, null)
   resolve_conflicts_on_create = try(each.value.resolve_conflicts, "OVERWRITE")
   resolve_conflicts_on_update = try(each.value.resolve_conflicts, "OVERWRITE")
-  service_account_role_arn = try(each.value.service_account_role_arn, null)
+  service_account_role_arn    = try(each.value.service_account_role_arn, null)
 
   timeouts {
     create = try(each.value.timeouts.create, var.cluster_addons_timeouts.create, null)

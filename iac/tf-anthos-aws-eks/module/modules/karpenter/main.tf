@@ -81,11 +81,11 @@ resource "helm_release" "this" {
       type  = try(set_sensitive.value.type, null)
     }
   }
-## You can temporarly uncomment to speed up testing.
-## Left uncommented for longer will eventually cause plan to fail with public repo auth error.
-#  lifecycle {
-#    ignore_changes = [repository_password]
-#  }
+  ## You can temporarly uncomment to speed up testing.
+  ## Left uncommented for longer will eventually cause plan to fail with public repo auth error.
+  #  lifecycle {
+  #    ignore_changes = [repository_password]
+  #  }
 }
 
 ################################################################################

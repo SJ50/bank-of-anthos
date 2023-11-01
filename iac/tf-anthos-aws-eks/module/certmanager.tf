@@ -9,7 +9,7 @@ data "aws_route53_zone" "selected" {
 data "aws_iam_policy_document" "cert_manager" {
   count = var.cert_manager.create_irsa && var.custom_addons.cert_manager ? 1 : 0
   statement {
-    actions   = ["route53:GetChange",]
+    actions   = ["route53:GetChange", ]
     resources = ["arn:${data.aws_partition.current.partition}:route53:::change/*"]
   }
 
@@ -28,8 +28,8 @@ data "aws_iam_policy_document" "cert_manager" {
 }
 
 module "cert_manager" {
-  source  = "./modules/cert_manager"
-  count = var.custom_addons.cert_manager ? 1 : 0
+  source = "./modules/cert_manager"
+  count  = var.custom_addons.cert_manager ? 1 : 0
 
   create_release = var.cert_manager.create_release
 
@@ -87,16 +87,16 @@ resource "kubectl_manifest" "cluster_issuer_r53_le" {
   yaml_body = yamlencode({
     apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
-    metadata   = {
+    metadata = {
       name = "${var.environment}-letsencrypt-r53"
     }
     spec = {
       acme = {
-        email               = try(var.cert_manager.email, "devops@isxfinanacial.com")
+        email = try(var.cert_manager.email, "devops@isxfinanacial.com")
         privateKeySecretRef = {
           name = "${var.environment}-letsencrypt"
         }
-        server  = var.environment == "prod" ? "https://acme-v02.api.letsencrypt.org/directory" : "https://acme-staging-v02.api.letsencrypt.org/directory"
+        server = var.environment == "prod" ? "https://acme-v02.api.letsencrypt.org/directory" : "https://acme-staging-v02.api.letsencrypt.org/directory"
         solvers = [
           {
             dns01 = {
@@ -118,16 +118,16 @@ resource "kubectl_manifest" "cluster_issuer_nginx_le" {
   yaml_body = yamlencode({
     apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
-    metadata   = {
+    metadata = {
       name = "${var.environment}-letsencrypt-nginx"
     }
     spec = {
       acme = {
-        email               = try(var.cert_manager.email, "devops@isxfinanacial.com")
+        email = try(var.cert_manager.email, "devops@isxfinanacial.com")
         privateKeySecretRef = {
           name = "${var.environment}-letsencrypt"
         }
-        server  = var.environment == "prod" ? "https://acme-v02.api.letsencrypt.org/directory" : "https://acme-staging-v02.api.letsencrypt.org/directory"
+        server = var.environment == "prod" ? "https://acme-v02.api.letsencrypt.org/directory" : "https://acme-staging-v02.api.letsencrypt.org/directory"
         solvers = [
           {
             http01 = {
@@ -147,9 +147,9 @@ resource "kubectl_manifest" "example_ssl_lt_r53" {
   count = var.custom_addons.cert_le_r53 ? 1 : 0
   yaml_body = yamlencode({
     apiVersion = "cert-manager.io/v1"
-    kind = "Certificate"
+    kind       = "Certificate"
     metadata = {
-      name = "example-ssl"
+      name      = "example-ssl"
       namespace = "default"
     }
     spec = {

@@ -1,5 +1,5 @@
 module "db" {
-  count = var.environment == "test" ? 1 : 0
+  count  = var.environment == "test" ? 1 : 0
   source = "../../../modules/aws/aws_rds"
 
   identifier                     = local.name # ! this is cluster name
@@ -31,8 +31,8 @@ module "db" {
   db_subnet_group_name            = "test-finops-default"
   db_subnet_group_use_name_prefix = var.database.db_subnet_group_use_name_prefix
   db_subnet_group_description     = var.database.db_subnet_group_description
-  subnet_ids = local.psql_subnets
-  vpc_security_group_ids = [aws_security_group.psql[0].id]
+  subnet_ids                      = local.psql_subnets
+  vpc_security_group_ids          = [aws_security_group.psql[0].id]
 
   maintenance_window              = var.database.maintenance_window
   backup_window                   = var.database.backup_window
@@ -55,13 +55,13 @@ module "db" {
     "created by" = "terraform submodule"
   }
   create_random_password = var.database.create_random_password
-  password = var.database.password
+  password               = var.database.password
 
   tags = local.tags
 }
 
 resource "aws_security_group" "psql" {
-  count = var.environment == "test" ? 1 : 0
+  count       = var.environment == "test" ? 1 : 0
   name        = local.name
   description = "${var.environment} ${var.solution} psql"
   vpc_id      = data.aws_vpc.selected.id
@@ -69,23 +69,23 @@ resource "aws_security_group" "psql" {
 }
 
 resource "aws_security_group_rule" "psql_to_eks" {
-  count = var.environment == "test" ? 1 : 0
-  security_group_id = aws_security_group.psql[0].id
-  from_port         = 0
-  description       = "Allow access from finops eks cluster to rabbitmq"
-  protocol          = "-1"
-  to_port           = 0
-  type              = "egress"
+  count                    = var.environment == "test" ? 1 : 0
+  security_group_id        = aws_security_group.psql[0].id
+  from_port                = 0
+  description              = "Allow access from finops eks cluster to rabbitmq"
+  protocol                 = "-1"
+  to_port                  = 0
+  type                     = "egress"
   source_security_group_id = module.eks.node_security_group_id
 }
 
 #SG Rule to access issuing psql from eks
 resource "aws_security_group_rule" "eks_to_psql" {
-  security_group_id = var.environment == "test" ? aws_security_group.psql[0].id : data.aws_security_group.psql.id
-  from_port         = 5432
-  protocol          = "tcp"
-  to_port           = 5432
-  type              = "ingress"
-  description       = "Allow access from finops eks cluster to psql"
+  security_group_id        = var.environment == "test" ? aws_security_group.psql[0].id : data.aws_security_group.psql.id
+  from_port                = 5432
+  protocol                 = "tcp"
+  to_port                  = 5432
+  type                     = "ingress"
+  description              = "Allow access from finops eks cluster to psql"
   source_security_group_id = module.eks.node_security_group_id
 }

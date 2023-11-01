@@ -112,7 +112,7 @@ resource "kubectl_manifest" "client" {
 # Example deployment using the [pause image](https://www.ianlewis.org/en/almighty-pause-container)
 # and starts with zero replicas
 resource "kubectl_manifest" "inflate" {
-  count = var.custom_addons.inflate ? 1 : 0
+  count     = var.custom_addons.inflate ? 1 : 0
   yaml_body = <<-YAML
     apiVersion: apps/v1
     kind: Deployment
@@ -137,7 +137,7 @@ resource "kubectl_manifest" "inflate" {
                   cpu: 1
   YAML
 
-#  depends_on = [
-#    kubectl_manifest.karpenter_node_template
-#  ]
+  #  depends_on = [
+  #    kubectl_manifest.karpenter_node_template
+  #  ]
 }

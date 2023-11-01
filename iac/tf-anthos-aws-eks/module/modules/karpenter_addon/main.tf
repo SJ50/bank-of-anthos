@@ -157,7 +157,7 @@ data "aws_iam_policy_document" "karpenter" {
 }
 
 module "karpenter_sqs" {
-  source  = "../karpenter_sqs"
+  source = "../karpenter_sqs"
 
   create = local.karpenter_enable_spot_termination
 
@@ -241,10 +241,10 @@ resource "aws_iam_role" "karpenter" {
 
 resource "aws_iam_role_policy_attachment" "karpenter" {
   for_each = { for k, v in {
-    AmazonEKSWorkerNodePolicy          = "${local.iam_role_policy_prefix}/AmazonEKSWorkerNodePolicy",
+    AmazonEKSWorkerNodePolicy            = "${local.iam_role_policy_prefix}/AmazonEKSWorkerNodePolicy",
     AmazonEC2ContainerRegistryFullAccess = "${local.iam_role_policy_prefix}/AmazonEC2ContainerRegistryFullAccess",
-    AmazonEKS_CNI_Policy               = "${local.iam_role_policy_prefix}/AmazonEKS_CNI_Policy"
-    AmazonEBSCreate                    = "${local.iam_role_policy_prefix}/service-role/AmazonEBSCSIDriverPolicy"
+    AmazonEKS_CNI_Policy                 = "${local.iam_role_policy_prefix}/AmazonEKS_CNI_Policy"
+    AmazonEBSCreate                      = "${local.iam_role_policy_prefix}/service-role/AmazonEBSCSIDriverPolicy"
   } : k => v if local.create_karpenter_node_iam_role }
 
   policy_arn = each.value
@@ -270,7 +270,7 @@ resource "aws_iam_instance_profile" "karpenter" {
 }
 
 module "karpenter" {
-  source  = "../karpenter"
+  source = "../karpenter"
   //version = "1.1.0"
 
   create = var.enable_karpenter
@@ -323,7 +323,7 @@ module "karpenter" {
         value = local.cluster_endpoint
       },
       {
-        name = "settings.aws.enablePodENI"
+        name  = "settings.aws.enablePodENI"
         value = true
       },
       {

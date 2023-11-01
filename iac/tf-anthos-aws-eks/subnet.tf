@@ -33,7 +33,7 @@ resource "aws_route_table" "eks_to_nat" {
   }
 
   lifecycle {
-    ignore_changes = [ route ]
+    ignore_changes = [route]
   }
 
   tags = {
@@ -42,16 +42,16 @@ resource "aws_route_table" "eks_to_nat" {
 }
 
 resource "aws_route_table_association" "this" {
-  count          = var.redundancy
+  count = var.redundancy
 
   subnet_id      = element(aws_subnet.private.*.id, count.index)
   route_table_id = element(aws_route_table.eks_to_nat.*.id, count.index)
 }
 
 resource "aws_network_acl" "this" {
-  count       = var.redundancy
-  vpc_id      = data.aws_vpc.selected.id
-  subnet_ids  = [aws_subnet.private[count.index].id]
+  count      = var.redundancy
+  vpc_id     = data.aws_vpc.selected.id
+  subnet_ids = [aws_subnet.private[count.index].id]
 
   ingress {
     protocol   = "-1"
@@ -82,12 +82,12 @@ resource "aws_network_acl" "this" {
 
 #SG Rule to access rabbitMQ from EKS
 resource "aws_security_group_rule" "eks_to_rabbit" {
-  count = var.environment == "stage" ? 1 : 0
-  security_group_id = data.aws_security_group.rabbit[0].id
-  from_port         = 5671
-  description       = "Allow access from finops eks cluster to rabbitmq"
-  protocol          = "tcp"
-  to_port           = 5671
-  type              = "ingress"
+  count                    = var.environment == "stage" ? 1 : 0
+  security_group_id        = data.aws_security_group.rabbit[0].id
+  from_port                = 5671
+  description              = "Allow access from finops eks cluster to rabbitmq"
+  protocol                 = "tcp"
+  to_port                  = 5671
+  type                     = "ingress"
   source_security_group_id = module.eks.node_security_group_id
 }

@@ -9,9 +9,9 @@ module "eks" {
   cluster_name                         = local.name
   cluster_endpoint_public_access       = var.cluster_public_endpoint
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
-  
-    cluster_addons                       = var.cluster_addons
-  
+
+  cluster_addons = var.cluster_addons
+
   # External encryption key
   create_kms_key = var.create_kms_key
   cluster_encryption_config = {
@@ -21,91 +21,91 @@ module "eks" {
 
   iam_role_additional_policies = {
     additional = aws_iam_policy.additional.arn
-  }  
+  }
 
 
-  vpc_id                               = module.vpc.vpc_id
-  subnet_ids                           = moduel.vpc.private_subnets
+  vpc_id                   = module.vpc.vpc_id
+  subnet_ids               = moduel.vpc.private_subnets
   control_plane_subnet_ids = module.vpc.intra_subnets
 
-  cluster_enabled_log_types            = var.cluster_enabled_log_types
-  enable_irsa                          = var.enable_irsa
- 
+  cluster_enabled_log_types = var.cluster_enabled_log_types
+  enable_irsa               = var.enable_irsa
+
   # Extend cluster security group rules
   cluster_security_group_additional_rules = merge(
     {
       node_to_eks_api = {
-        description = "Node to EKS api"
-        protocol    = "-1"
-        from_port   = 0
-        to_port     = 0
-        type        = "ingress"
+        description              = "Node to EKS api"
+        protocol                 = "-1"
+        from_port                = 0
+        to_port                  = 0
+        type                     = "ingress"
         source_security_group_id = module.eks.node_security_group_id
       }
       ingress_nodes_ephemeral_ports_tcp = {
-      description                = "Nodes on ephemeral ports"
-      protocol                   = "tcp"
-      from_port                  = 1025
-      to_port                    = 65535
-      type                       = "ingress"
-      source_node_security_group = true
-    }
-    # Test: https://github.com/terraform-aws-modules/terraform-aws-eks/pull/2319
-    ingress_source_security_group_id = {
-      description              = "Ingress from another computed security group"
-      protocol                 = "tcp"
-      from_port                = 22
-      to_port                  = 22
-      type                     = "ingress"
-      source_security_group_id = aws_security_group.additional.id
-    }
+        description                = "Nodes on ephemeral ports"
+        protocol                   = "tcp"
+        from_port                  = 1025
+        to_port                    = 65535
+        type                       = "ingress"
+        source_node_security_group = true
+      }
+      # Test: https://github.com/terraform-aws-modules/terraform-aws-eks/pull/2319
+      ingress_source_security_group_id = {
+        description              = "Ingress from another computed security group"
+        protocol                 = "tcp"
+        from_port                = 22
+        to_port                  = 22
+        type                     = "ingress"
+        source_security_group_id = aws_security_group.additional.id
+      }
     },
     var.cluster_additional_security_rules
   )
   # Extend node security group
-  node_security_group_additional_rules    = merge(
+  node_security_group_additional_rules = merge(
     var.node_additional_security_rules,
     {
       eks_to_psql = {
-        description = "EKS to psql"
-        protocol    = "tcp"
-        from_port   = 5432
-        to_port     = 5432
-        type        = "egress"
+        description              = "EKS to psql"
+        protocol                 = "tcp"
+        from_port                = 5432
+        to_port                  = 5432
+        type                     = "egress"
         source_security_group_id = var.environment == "test" ? aws_security_group.psql[0].id : data.aws_security_group.psql.id
       }
       ingress_self_all = {
-      description = "Node to node all ports/protocols"
-      protocol    = "-1"
-      from_port   = 0
-      to_port     = 0
-      type        = "ingress"
-      self        = true
-    }
-    # Test: https://github.com/terraform-aws-modules/terraform-aws-eks/pull/2319
-    ingress_source_security_group_id = {
-      description              = "Ingress from another computed security group"
-      protocol                 = "tcp"
-      from_port                = 22
-      to_port                  = 22
-      type                     = "ingress"
-      source_security_group_id = aws_security_group.additional.id
-    } 
+        description = "Node to node all ports/protocols"
+        protocol    = "-1"
+        from_port   = 0
+        to_port     = 0
+        type        = "ingress"
+        self        = true
+      }
+      # Test: https://github.com/terraform-aws-modules/terraform-aws-eks/pull/2319
+      ingress_source_security_group_id = {
+        description              = "Ingress from another computed security group"
+        protocol                 = "tcp"
+        from_port                = 22
+        to_port                  = 22
+        type                     = "ingress"
+        source_security_group_id = aws_security_group.additional.id
+      }
     }
   )
 
 
-  cert_manager                         = var.cert_manager
-  region                               = var.region
-  ingress_external                     = var.ingress_external
-  ingress_internal                     = var.ingress_internal
-# Remote ssh access to nodes
-#  eks_managed_node_group_defaults = {
-#    remote_access = {
-#      ec2_ssh_key = ""
-#      source_security_group_ids = [""]
-#    }
-#  }
+  cert_manager     = var.cert_manager
+  region           = var.region
+  ingress_external = var.ingress_external
+  ingress_internal = var.ingress_internal
+  # Remote ssh access to nodes
+  #  eks_managed_node_group_defaults = {
+  #    remote_access = {
+  #      ec2_ssh_key = ""
+  #      source_security_group_ids = [""]
+  #    }
+  #  }
 
   # Self Managed Node Group(s)
   self_managed_node_group_defaults = {
@@ -227,7 +227,7 @@ module "eks" {
   # }
 
   manage_aws_auth_configmap = var.manage_aws_auth_configmap
-aws_auth_node_iam_role_arns_non_windows = [
+  aws_auth_node_iam_role_arns_non_windows = [
     module.eks_managed_node_group.iam_role_arn,
     module.self_managed_node_group.iam_role_arn,
   ]
@@ -236,18 +236,18 @@ aws_auth_node_iam_role_arns_non_windows = [
   ]
 
   # Entries in aws-auth config map for IAM users
-  aws_auth_users = concat([],var.aws_auth_users)
+  aws_auth_users = concat([], var.aws_auth_users)
   aws_auth_roles = concat(
     [
       {
         # Entry in aws-auth config map for karpenter IAM role
-      rolearn  = module.karpenter.role_arn
-      username = "system:node:{{EC2PrivateDNSName}}"
-      groups = [
-        "system:bootstrappers",
-        "system:nodes",
-      ]
-    },
+        rolearn  = module.karpenter.role_arn
+        username = "system:node:{{EC2PrivateDNSName}}"
+        groups = [
+          "system:bootstrappers",
+          "system:nodes",
+        ]
+      },
     ],
     var.aws_auth_roles
   )
@@ -258,13 +258,13 @@ aws_auth_node_iam_role_arns_non_windows = [
   node_security_group_tags = {
     #Additional tags for karpenter autoscaling
     "kubernetes.io/cluster/${local.name}" = "owned"
-    "kubernetes.io/role/internal-elb" = 1
-    "karpenter.sh/discovery" = local.name
+    "kubernetes.io/role/internal-elb"     = 1
+    "karpenter.sh/discovery"              = local.name
   }
   # Cluster SG tags
   cluster_security_group_tags = {
     "kubernetes.io/cluster/${local.name}" = "owned"
-    "kubernetes.io/role/internal-elb" = 1
+    "kubernetes.io/role/internal-elb"     = 1
   }
 
   tags = local.tags

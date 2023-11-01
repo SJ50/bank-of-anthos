@@ -3,7 +3,7 @@
 ################################################################################
 
 resource "helm_release" "cilium" {
-  count = var.custom_addons.cilium ? 1 : 0
+  count            = var.custom_addons.cilium ? 1 : 0
   name             = "cilium"
   chart            = "cilium"
   version          = "1.14.1"

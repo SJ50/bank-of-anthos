@@ -29,7 +29,7 @@ resource "helm_release" "ingress_internal" {
             service.beta.kubernetes.io/aws-load-balancer-type: nlb
     EOF
   ]
-  force_update     = false
+  force_update = false
 }
 
 resource "helm_release" "ingress-public" {
@@ -41,7 +41,7 @@ resource "helm_release" "ingress-public" {
   description      = "A helm chart to install Ingress Nginx External/Public"
   namespace        = var.ingress_external.namespace
   create_namespace = var.ingress_external.create_namespace
-  values           = [
+  values = [
     <<EOF
     controller:
       ingressClassByName: true

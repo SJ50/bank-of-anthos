@@ -616,7 +616,7 @@ variable "region" {
 
 variable "karpenter" {
   description = "Karpenter configuration"
-  type = any
+  type        = any
   default = {
     instance_type = ["t3.medium"]
     consolidation = false
@@ -627,32 +627,32 @@ variable "karpenter" {
 
 variable "cert_manager" {
   description = "Cert manager configuration"
-  type = any
+  type        = any
   default = {
-    create_irsa      = true
-    create_release   = true
-    create_namespace = true
-    name             = "cert-manager"
-    description      = "A Helm chart to deploy cert-manager"
-    namespace        = "cert-manager"
-    chart            = "cert-manager"
-    chart_version    = "v1.12.3" #latest as of 21.08.2023
-    repository       = "https://charts.jetstack.io"
-    values           = []
-    postrender       = []
-    role_name        = "cert-manager"
-    role_name_use_prefix = true
+    create_irsa                   = true
+    create_release                = true
+    create_namespace              = true
+    name                          = "cert-manager"
+    description                   = "A Helm chart to deploy cert-manager"
+    namespace                     = "cert-manager"
+    chart                         = "cert-manager"
+    chart_version                 = "v1.12.3" #latest as of 21.08.2023
+    repository                    = "https://charts.jetstack.io"
+    values                        = []
+    postrender                    = []
+    role_name                     = "cert-manager"
+    role_name_use_prefix          = true
     role_permissions_boundary_arn = null
     role_description              = "IRSA for cert-manger project"
     role_policies                 = {}
-    route53_hosted_zone_arns = ["arn:aws:route53:::hostedzone/*"]
-    is_zone_private  = false
+    route53_hosted_zone_arns      = ["arn:aws:route53:::hostedzone/*"]
+    is_zone_private               = false
   }
 }
 
 variable "ingress_external" {
   description = "External/Public Ingress nginx configuration"
-  type = any
+  type        = any
   default = {
     create_namespace = false
     namespace        = "ingress-nginx"
@@ -662,7 +662,7 @@ variable "ingress_external" {
 
 variable "ingress_internal" {
   description = "Internal Ingress nginx configuration"
-  type = any
+  type        = any
   default = {
     create_namespace = false
     namespace        = "ingress-nginx"
@@ -677,18 +677,18 @@ variable "aws_load_balancer_controller" {
 
 variable "custom_addons" {
   description = "Custom addons for EKS"
-  type = any
+  type        = any
   default = {
-    cilium        = true
-    karpenter     = true
-    argocd        = false
-    inflate       = false
-    example       = false
-    cert_manager  = false
-    cert_le_r53   = false
-    cert_le_nginx = false
-    ingress_ext   = false
-    ingress_int   = false
+    cilium            = true
+    karpenter         = true
+    argocd            = false
+    inflate           = false
+    example           = false
+    cert_manager      = false
+    cert_le_r53       = false
+    cert_le_nginx     = false
+    ingress_ext       = false
+    ingress_int       = false
     aws_lb_controller = false
   }
 }

@@ -7,9 +7,9 @@ locals {
   partition  = data.aws_partition.current.partition
 
   # Threads the sleep resource into the module to make the dependency
-  cluster_name      = try(aws_eks_cluster.this[0].name, "")
-  cluster_endpoint  = try(aws_eks_cluster.this[0].endpoint, null)
-  oidc_provider_arn = try(aws_iam_openid_connect_provider.oidc_provider[0].arn, null)
+  cluster_name                                 = try(aws_eks_cluster.this[0].name, "")
+  cluster_endpoint                             = try(aws_eks_cluster.this[0].endpoint, null)
+  oidc_provider_arn                            = try(aws_iam_openid_connect_provider.oidc_provider[0].arn, null)
   aws_load_balancer_controller_service_account = try(var.aws_load_balancer_controller.service_account_name, "aws-load-balancer-controller-sa")
   aws_load_balancer_controller_namespace       = try(var.aws_load_balancer_controller.namespace, "kube-system")
 
@@ -276,7 +276,7 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
 }
 
 module "aws_load_balancer_controller" {
-  source  = "./modules/aws_lb_controller"
+  source = "./modules/aws_lb_controller"
 
   create = var.custom_addons.aws_lb_controller
 
@@ -322,7 +322,7 @@ module "aws_load_balancer_controller" {
     {
       name  = "serviceAccount.name"
       value = local.aws_load_balancer_controller_service_account
-    }, {
+      }, {
       name  = "clusterName"
       value = local.cluster_name
     }],

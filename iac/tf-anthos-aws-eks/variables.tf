@@ -12,7 +12,7 @@ variable "solution" {
 }
 variable "existing_vpc_name" {
   description = "Existing VPC Name"
-  type = string
+  type        = string
 }
 variable "redundancy" {
   description = "Redundancy across AZs"
@@ -21,11 +21,11 @@ variable "redundancy" {
 }
 variable "psql_sg_name" {
   description = "Name of security group associated with psql rds."
-  type = string
+  type        = string
 }
 variable "redis_subnet_name" {
   description = "Subnets name for redis picked by data block"
-  type = string
+  type        = string
 }
 variable "eks_subnet_range" {
   description = "EKS Subnet ip range"
@@ -34,7 +34,7 @@ variable "eks_subnet_range" {
 variable "cluster_addons" {
   description = "EKS Addons"
   type        = any
-  default     = {
+  default = {
     coredns = {
       preserve    = true
       most_recent = true
@@ -67,7 +67,7 @@ variable "cluster_endpoint_public_access_cidrs" {
 
 variable "karpenter" {
   description = "Karpenter configuration"
-  type = any
+  type        = any
   default = {
     instance_type = ["t3.medium"]
     consolidation = false
@@ -77,50 +77,50 @@ variable "karpenter" {
 }
 variable "node_additional_security_rules" {
   description = "Additional security rulues for node SG"
-  type = any
-  default = {}
+  type        = any
+  default     = {}
 }
 variable "cluster_additional_security_rules" {
   description = "Additional security rulues for cluster SG"
-  type = any
-  default = {}
+  type        = any
+  default     = {}
 }
 
 
 
 variable "cert_manager" {
   description = "Cert manager configuration"
-  type = any
+  type        = any
   default = {
-    create_irsa      = true
-    create_release   = true
-    create_namespace = true
-    name             = "cert-manager"
-    description      = "A Helm chart to deploy cert-manager"
-    namespace        = "cert-manager"
-    chart            = "cert-manager"
-    chart_version    = "v1.12.3" #latest as of 21.08.2023
-    repository       = "https://charts.jetstack.io"
-    values           = []
-    postrender       = []
-    role_name        = "cert-manager"
-    role_name_use_prefix = true
+    create_irsa                   = true
+    create_release                = true
+    create_namespace              = true
+    name                          = "cert-manager"
+    description                   = "A Helm chart to deploy cert-manager"
+    namespace                     = "cert-manager"
+    chart                         = "cert-manager"
+    chart_version                 = "v1.12.3" #latest as of 21.08.2023
+    repository                    = "https://charts.jetstack.io"
+    values                        = []
+    postrender                    = []
+    role_name                     = "cert-manager"
+    role_name_use_prefix          = true
     role_permissions_boundary_arn = null
     role_description              = "IRSA for cert-manger project"
     role_policies                 = {}
-    route53_hosted_zone_arns = ["arn:aws:route53:::hostedzone/*"]
-    is_zone_private  = false
+    route53_hosted_zone_arns      = ["arn:aws:route53:::hostedzone/*"]
+    is_zone_private               = false
   }
 }
 
 variable "database" {
-  type = any
+  type    = any
   default = null
 }
 
 variable "ingress_external" {
   description = "External/Public Ingress nginx configuration"
-  type = any
+  type        = any
   default = {
     create_namespace = false
     namespace        = "ingress-nginx"
@@ -130,7 +130,7 @@ variable "ingress_external" {
 
 variable "ingress_internal" {
   description = "Internal Ingress nginx configuration"
-  type = any
+  type        = any
   default = {
     create_namespace = false
     namespace        = "ingress-nginx"
@@ -139,18 +139,18 @@ variable "ingress_internal" {
 
 variable "custom_addons" {
   description = "Custom addons for EKS"
-  type = any
+  type        = any
   default = {
-    cilium        = true
-    argocd        = true
-    karpenter     = true
-    inflate       = true
-    cert_manager  = true
-    cert_le_r53   = false
-    cert_le_nginx = true
-    ingress_int   = false
-    ingress_ext   = false
-    example       = false
+    cilium            = true
+    argocd            = true
+    karpenter         = true
+    inflate           = true
+    cert_manager      = true
+    cert_le_r53       = false
+    cert_le_nginx     = true
+    ingress_int       = false
+    ingress_ext       = false
+    example           = false
     aws_lb_controller = false
   }
 }
