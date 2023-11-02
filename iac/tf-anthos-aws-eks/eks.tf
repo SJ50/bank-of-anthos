@@ -7,7 +7,7 @@ module "eks" {
   version = "~> 19.0"
 
   cluster_name                         = local.name
-  cluster_version = var.cluster_version # 1.27
+  cluster_version                      = var.cluster_version # 1.27
   cluster_endpoint_public_access       = var.cluster_public_endpoint
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
