@@ -7,13 +7,14 @@ module "eks" {
   version = "~> 19.0"
 
   cluster_name                         = local.name
+  cluster_version = var.cluster_version # 1.27
   cluster_endpoint_public_access       = var.cluster_public_endpoint
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
 
   cluster_addons = var.cluster_addons
 
   # External encryption key
-  create_kms_key = var.create_kms_key
+  create_kms_key = var.create_kms_key # true
   cluster_encryption_config = {
     resources        = ["secrets"]
     provider_key_arn = module.kms.key_arn
