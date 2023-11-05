@@ -1,9 +1,19 @@
+provider "aws" {
+  region = "us-east-1"
+  alias  = "virginia"
+}
+
+data "aws_ecrpublic_authorization_token" "token" {
+  provider = aws.virginia
+}
+
 ################################################################################
 # Karpenter
 ################################################################################
 
 module "karpenter" {
-  source = "../../modules/karpenter"
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "19.18.0"
 
   cluster_name           = module.eks.cluster_name
   irsa_oidc_provider_arn = module.eks.oidc_provider_arn

@@ -26,7 +26,7 @@ module "eks" {
 
 
   vpc_id                   = module.vpc.vpc_id
-  subnet_ids               = moduel.vpc.private_subnets
+  subnet_ids               = module.vpc.private_subnets
   control_plane_subnet_ids = module.vpc.intra_subnets
 
   cluster_enabled_log_types = var.cluster_enabled_log_types
@@ -73,7 +73,7 @@ module "eks" {
         from_port                = 5432
         to_port                  = 5432
         type                     = "egress"
-        source_security_group_id = var.environment == "test" ? aws_security_group.psql[0].id : data.aws_security_group.psql.id
+        source_security_group_id = module.security_group.security_group_id
       }
       ingress_self_all = {
         description = "Node to node all ports/protocols"
@@ -95,11 +95,6 @@ module "eks" {
     }
   )
 
-
-  cert_manager     = var.cert_manager
-  region           = var.region
-  ingress_external = var.ingress_external
-  ingress_internal = var.ingress_internal
   # Remote ssh access to nodes
   #  eks_managed_node_group_defaults = {
   #    remote_access = {
@@ -270,4 +265,75 @@ module "eks" {
 
   tags = local.tags
 
+}
+
+################################################################################
+# Sub-Module Usage on Existing/Separate Cluster
+################################################################################
+
+module "eks_managed_node_group" {
+  source  = "terraform-aws-modules/eks/aws//modules/eks-managed-node-group"
+  version = "19.18.0"
+
+  name            = "separate-eks-mng"
+  cluster_name    = module.eks.cluster_name
+  cluster_version = module.eks.cluster_version
+
+  subnet_ids                        = module.vpc.private_subnets
+  cluster_primary_security_group_id = module.eks.cluster_primary_security_group_id
+  vpc_security_group_ids = [
+    module.eks.cluster_security_group_id,
+  ]
+
+  ami_type = "BOTTLEROCKET_x86_64"
+  platform = "bottlerocket"
+
+  # this will get added to what AWS provides
+  bootstrap_extra_args = <<-EOT
+    # extra args added
+    [settings.kernel]
+    lockdown = "integrity"
+
+    [settings.kubernetes.node-labels]
+    "label1" = "foo"
+    "label2" = "bar"
+  EOT
+
+  tags = merge(local.tags, { Separate = "eks-managed-node-group" })
+}
+
+module "self_managed_node_group" {
+  source  = "terraform-aws-modules/eks/aws//modules/self-managed-node-group"
+  version = "19.18.0"
+
+  name                = "separate-self-mng"
+  cluster_name        = module.eks.cluster_name
+  cluster_version     = module.eks.cluster_version
+  cluster_endpoint    = module.eks.cluster_endpoint
+  cluster_auth_base64 = module.eks.cluster_certificate_authority_data
+
+  instance_type = "m5.large"
+
+  subnet_ids = module.vpc.private_subnets
+  vpc_security_group_ids = [
+    module.eks.cluster_primary_security_group_id,
+    module.eks.cluster_security_group_id,
+  ]
+
+  tags = merge(local.tags, { Separate = "self-managed-node-group" })
+}
+
+module "fargate_profile" {
+  source  = "terraform-aws-modules/eks/aws//modules/fargate-profile"
+  version = "19.18.0"
+
+  name         = "separate-fargate-profile"
+  cluster_name = module.eks.cluster_name
+
+  subnet_ids = module.vpc.private_subnets
+  selectors = [{
+    namespace = "kube-system"
+  }]
+
+  tags = merge(local.tags, { Separate = "fargate-profile" })
 }

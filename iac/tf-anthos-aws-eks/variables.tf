@@ -6,63 +6,25 @@ variable "environment" {
   description = "Name of environment"
   type        = string
 }
-variable "solution" {
-  description = "Solution, project name"
+variable "project" {
+  description = "project name"
   type        = string
 }
 variable "existing_vpc_name" {
   description = "Existing VPC Name"
   type        = string
+  default     = ""
 }
 variable "redundancy" {
   description = "Redundancy across AZs"
   type        = number
-  default     = 2
+  default     = 3
 }
-variable "psql_sg_name" {
-  description = "Name of security group associated with psql rds."
-  type        = string
-}
-variable "redis_subnet_name" {
-  description = "Subnets name for redis picked by data block"
-  type        = string
-}
-variable "eks_subnet_range" {
-  description = "EKS Subnet ip range"
-  type        = number
-}
-variable "cluster_addons" {
-  description = "EKS Addons"
-  type        = any
-  default = {
-    coredns = {
-      preserve    = true
-      most_recent = true
-
-      timeouts = {
-        create = "25m"
-        delete = "10m"
-      }
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-    vpc-cni = {
-      most_recent = true
-    }
-  }
-}
-
 
 variable "cluster_public_endpoint" {
   description = "EKS Public endpoint"
   type        = bool
   default     = false
-}
-variable "cluster_endpoint_public_access_cidrs" {
-  description = "List of CIDR blocks which can access the Amazon EKS public API server endpoint"
-  type        = list(string)
-  default     = ["0.0.0.0/0"]
 }
 
 variable "karpenter" {
@@ -85,8 +47,6 @@ variable "cluster_additional_security_rules" {
   type        = any
   default     = {}
 }
-
-
 
 variable "cert_manager" {
   description = "Cert manager configuration"

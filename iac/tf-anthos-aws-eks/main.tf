@@ -20,11 +20,10 @@ locals {
 
   tags = {
     environment    = var.environment
-    solution       = var.solution
     project        = var.project
     managed_by     = "terraform"
     team           = "devops"
-    tf_path        = regexall("terraform-v2.*", path.cwd)[0]
+    tf_path        = regexall("bank-of-anthos.*", path.cwd)[0]
     repo           = data.external.git.result.repo
     deployer       = data.external.git.result.user_name
     deployer_email = data.external.git.result.user_email
@@ -33,36 +32,8 @@ locals {
 
 data "aws_availability_zones" "available" {}
 data "aws_partition" "current" {}
-
-data "aws_vpc" "selected" {
-  count = length(var.existing_vpc_name) > 0 ? 1 : 0
-  tags = {
-    Name = var.existing_vpc_name
-  }
-}
-
-data "aws_nat_gateways" "selected" {
-  count  = length(var.existing_vpc_name) > 0 ? 1 : 0
-  vpc_id = data.aws_vpc.selected[0].id
-}
-
-data "aws_security_group" "psql" {
-  count  = length(var.existing_vpc_name) > 0 ? 1 : 0
-  vpc_id = data.aws_vpc.selected[0].id
-  name   = var.psql_sg_name
-}
+data "aws_caller_identity" "current" {}
 
 data "aws_eks_cluster_auth" "cluster-auth" {
   name = module.eks.cluster_name
-}
-
-data "aws_subnets" "psql" {
-  count = length(var.existing_vpc_name) > 0 ? 1 : 0
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.selected[0].id]
-  }
-  tags = {
-    Name = var.database.subnet_name
-  }
 }

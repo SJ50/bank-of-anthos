@@ -3,7 +3,8 @@
 ################################################################################
 
 module "vpc_endpoints" {
-  source = "../../modules/vpc-endpoints"
+  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version = "5.1.2"
 
   vpc_id = module.vpc.vpc_id
 
@@ -60,7 +61,8 @@ module "vpc_endpoints" {
 }
 
 module "vpc_endpoints_nocreate" {
-  source = "../../modules/vpc-endpoints"
+  source  = "terraform-aws-modules/vpc/aws//modules/vpc-endpoints"
+  version = "5.1.2"
 
   create = false
 }
